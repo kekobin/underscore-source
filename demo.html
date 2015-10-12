@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>demo</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		var ArrayObj = Array.prototype;
+		var ObjectObj = Object.prototype;
+		var hasOwnProperty = ObjectObj.hasOwnProperty;
+		var slice = ArrayObj.slice;
+		var toString = ObjectObj.toString;
+		var nativeForEach = ArrayObj.forEach;
+
+		var each = function(obj, callback, context) {
+			if(obj == null) return;
+			if(nativeForEach && obj.forEach == nativeForEach) {
+				obj.forEach(callback, context);
+			} else if(toString.call(obj) === '[object Array]') {
+				for(var i=0,l=obj.length;i<l;i++) {
+					callback.call(context, obj[i], i, obj);
+				}
+			} else {
+				for(var k in obj) {
+					var item = obj[k];
+					if(hasOwnProperty(k)) {
+						callback.call(context, item, k, obj);
+					}
+				}
+			}
+		};
+
+		var data = [
+			{a: 'aaa'},
+			{b: 'bbb'},
+			{c: 'ccc'}
+		];
+		each(data, function(item, i, array) {
+			alert(item);
+		});
+
+
+	</script>
+</body>
+</html>

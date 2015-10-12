@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Demo For ES5 Array</title>
+</head>
+<body>
+	<p>
+		<p>ES5中新增了写数组方法，如下：</p>
+		<p>	forEach (js v1.6)</p>
+		<p>	map (js v1.6)</p>
+		<p>	filter (js v1.6)</p>
+		<p>	some (js v1.6)</p>
+		<p>	every (js v1.6)</p>
+		<p>	indexOf (js v1.6)</p>
+		<p>	lastIndexOf (js v1.6)</p>
+		<p>	reduce (js v1.8)</p>
+		<p>	reduceRight (js v1.8)</p>
+		<p>浏览器支持</p>
+		<p>	Opera 11+</p>
+		<p>	Firefox 3.6+</p>
+		<p>	Safari 5+</p>
+		<p>	Chrome 8+</p>
+		<p>	Internet Explorer 9+</p>
+	</p>
+
+	<script>
+		//1.forEach就是遍历、循环
+		// [1,2,3].forEach(function(item, i, array) {
+		// 	log('---this is item---');
+		// 	log(item)
+		// 	log(i)
+		// 	log(array)
+		// });
+		
+		//除了传callback，还可以传一个context上下文参数
+		//如下，如果这第2个可选参数不指定，则使用全局对象代替（在浏览器是为window），严格模式下甚至是undefined.
+		var database = {
+		  users: ["张含韵", "江一燕", "李小璐"],
+		  sendEmail: function (user) {
+		    if (this.isValidUser(user)) {
+		      // log("你好，" + user);
+		    } else {
+		      // log("抱歉，"+ user +"，你不是本家人");	
+		    }
+		  },
+		  isValidUser: function (user) {
+		    return /^张/.test(user);
+		  }
+		};
+
+		// 给每个人法邮件
+		database.users.forEach(  // database.users中人遍历
+		  database.sendEmail,    // 发送邮件
+		  database               // 使用database代替上面标红的this
+		);
+
+		//2.map:作用不难理解，“映射”嘛，也就是原数组被“映射”成对应新数组。callback需要有return值
+		var mapResult = [2,4,5,6,7].map(function(item) {
+			return item*2;
+		});
+		// log(mapResult);
+
+		//3.filter:为“过滤”、“筛选”之意。指数组filter后，返回过滤后的新数组。
+		//filter的callback函数需要返回布尔值true或false. 如果为true则表示，通过啦！如果为false, 只能高歌“我只能无情地将你抛弃……”。
+		var filterResult = [2,3,4,5,8,6,9].filter(function(item) {
+			return item > 5;
+		});
+
+		// log(filterResult.sort())
+
+		//4.some:意指“某些”，指是否“某些项”合乎条件。与下面的every算是好基友，every表示是否“每一项”都要靠谱。
+		//some要求至少有1个值让callback返回true就可以了。some只要有true即返回不再执行了。
+		if([1,2,3].some(function(item) { return item > 2;})) {
+			// log('There is an item larger than 2');
+		}
+
+		//5.every:跟some的基友关系已经是公开的秘密了，同样是返回Boolean值，不过，every需要每一个妃子都要让朕满意，否则——“来人，给我拖出去砍了！”
+		if([1,2,3].every(function(item) { return item > 0;})) {
+			//log('All item larger than 0');
+		}
+
+		//6.indexOf:方法在字符串中自古就有，string.indexOf(searchString, position)。数组这里的indexOf方法与之类似。
+		// log([1,2,6,3].indexOf(6));//2
+
+		//7.reduce:接近于“迭代”、“递归(recursion)”之意，array.reduce(callback[, initialValue])，callback函数接受4个参数：之前值、当前值、索引值以及数组本身。initialValue参数可选，表示初始值。若指定，则当作最初使用的previous值；如果缺省，则使用数组的第一个元素作为previous初始值，同时current往后排一位，相比有initialValue值少一次迭代。
+		var sum = [1, 2, 3, 4].reduce(function (previous, current, index, array) {
+		  return previous + current;
+		});
+		// log(sum); // 10
+		//有了reduce，我们可以轻松实现二维数组的扁平化：
+		var matrix = [
+		  [1, 2],
+		  [3, 4],
+		  [5, 6]
+		];
+
+		// 二维数组扁平化
+		var flatten = matrix.reduce(function (previous, current) {
+		  return previous.concat(current);
+		});
+
+		// log(flatten); // [1, 2, 3, 4, 5, 6]
+
+		//8.reduceRight:跟reduce用法类似,差异在于reduceRight是从数组的末尾开始实现。
+		var data = [1, 2, 3, 4];
+		var specialDiff = data.reduceRight(function (previous, current, index) {
+		  if (index == 0) {
+		    return previous + current;
+		  }
+		  return previous - current;
+		});
+
+		log(specialDiff); // 0
+
+		function log(msg) {
+			console.log(msg);
+		}
+	</script>
+
+	
+	<script>
+		//兼容性处理
+		if(typeof Array.prototype.forEach != 'function') {
+			Array.prototype.forEach = function(fn, context) {
+				if(typeof fn != 'function') return;
+				for(var i=0,l=this.length;i<l;i++) {
+					fn.call(context, this[i], i, this);
+				}
+			};
+		}
+		if(typeof Array.prototype.map != 'function') {
+			Array.prototype.map = function(fn, context) {
+				if(typeof fn != 'function') return;
+				var arr = [];
+				for(var i=0,l=this.length;i<l;i++) {
+					arr.push(fn.call(context, this[i], i, this));
+				}
+				return arr;
+			};
+		}
+		if(typeof Array.prototype.filter != 'function') {
+			Array.prototype.filter = function(fn, context) {
+				if(typeof fn != 'function') return;
+				var arr = [];
+				for(var i=0,l=this.length;i<l;i++) {
+					fn.call(context, this[i], i, this) && arr.push(this[i]);
+				}
+				return arr;
+			};
+		}
+		if(typeof Array.prototype.some != 'function') {
+			Array.prototype.some = function(fn, context) {
+				if(typeof fn != 'function') return;
+				var bool = false;
+				for(var i=0,l=this.length;i<l;i++) {
+					if(fn.call(context, this[i], i, this)) {
+						bool = true;
+						break;
+					}
+				}
+
+				return bool;
+			};
+		}
+		if(typeof Array.prototype.every != 'function') {
+			Array.prototype.every = function(fn, context) {
+				if(typeof fn != 'function') return;
+				var bool = true;
+				for(var i=0,l=this.length;i<l;i++) {
+					if(!fn.call(context, this[i], i, this)) {
+						bool = false;
+						break;
+					}
+				}
+
+				return bool;
+			};
+		}
+		if(typeof Array.prototype.reduce != 'function') {
+			Array.prototype.reduce = function(fn, initialValue) {
+				var previous = initialValue, k=0;
+				if(typeof initialValue == undefined) {
+					previous = this[0];
+					k = 1;
+				}
+
+				if(typeof fn == 'function') {
+					for(k;k<this.length;k++) {
+						this.hasOwnProperty(k) && (previous = fn(previous, this[k], k, this));
+					}
+				}
+
+				return previous;
+			};
+		}
+		if(typeof Array.prototype.reduceRight != 'function') {
+			Array.prototype.reduceRight = function(fn, initialValue) {
+				var previous = initialValue, k=0;
+				if(typeof initialValue == undefined) {
+					previous = this[this.length-1];
+					k = this.length-1;
+				}
+
+				if(typeof fn == 'function') {
+					for(k;k>=0;k--) {
+						this.hasOwnProperty(k) && (previous = fn(previous, this[k], k, this));
+					}
+				}
+
+				return previous;
+			};
+		}
+	</script>
+</body>
+</html>
